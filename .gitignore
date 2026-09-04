@@ -1,0 +1,7 @@
+@"
+.venv/
+__pycache__/
+*.pyc
+gestao_ria.db
+fotos_vistorias/
+"@ | Out-File -Encoding utf8 .gitignore
