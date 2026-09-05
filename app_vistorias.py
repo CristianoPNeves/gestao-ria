@@ -412,11 +412,14 @@ if menu == "⚙️ 1. Importador & Roteirizador Logístico":
 # ETAPA 2: RELATÓRIO DE VISTORIAS E IMPRESSÃO
 # =============================================================================
 elif menu == "📄 2. Relatório de Vistorias e Impressão":
-    st.title("📄 Relatório RIA - Vistorias e Programação")
-
     conn = get_db()
-    df_rel = pd.read_sql("SELECT * FROM rotas_ativas ORDER BY dia_rota, ordem_parada", conn)
+    df_rel = pd.read_sql("SELECT * FROM rotas_ativas", conn)
     conn.close()
+
+    if not df_rel.empty:
+        # Extrai apenas o número do dia para ordenação numérica real (1, 2, 3... 10, 11, 12)
+        df_rel['dia_num'] = df_rel['dia_rota'].astype(str).str.extract(r'(\d+)').fillna(0).astype(int)
+        df_rel = df_rel.sort_values(by=['dia_num', 'ordem_parada']).drop(columns=['dia_num']).reset_index(drop=True)
 
     if df_rel.empty:
         st.info("Nenhuma rota cadastrada no momento. Processe o arquivo na Etapa 1.")
