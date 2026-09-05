@@ -360,16 +360,27 @@ if menu == "⚙️ 1. Importador & Roteirizador Logístico":
                         rotas_finais.append(atual)
 
                         while pontos_restantes:
+                            # REGRA RÍGIDA: só adiciona se respeitar AMBOS os limites (locais e elevadores)
                             candidatos = [
-                                p for p in pontos_restantes
-                                if (locais_acum + 1 <= max_locais_dia) and
-                                   (elev_acum + p['qtd_elev'] <= max_elev_dia or locais_acum < 2)
+                                p
+                                for p in pontos_restantes
+                                if (locais_acum + 1 <= max_locais_dia)
+                                   and (elev_acum + p['qtd_elev'] <= max_elev_dia)
                             ]
+
+                            # Se nenhum outro endereço couber sem estourar o limite, encerra o dia
                             if not candidatos:
                                 break
 
-                            proximo = min(candidatos,
-                                          key=lambda p: calc_dist_km(atual['lat'], atual['lon'], p['lat'], p['lon']))
+                            proximo = min(
+                                candidatos,
+                                key=lambda p: calc_dist_km(
+                                    atual['lat'],
+                                    atual['lon'],
+                                    p['lat'],
+                                    p['lon'],
+                                ),
+                            )
                             pontos_restantes.remove(proximo)
                             parada_num += 1
                             locais_acum += 1
@@ -378,7 +389,6 @@ if menu == "⚙️ 1. Importador & Roteirizador Logístico":
                             proximo['ordem_parada'] = parada_num
                             rotas_finais.append(proximo)
                             atual = proximo
-
                         dia_num += 1
 
                     conn = get_db()
