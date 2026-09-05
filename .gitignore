@@ -1,4 +1,9 @@
 @"
+dist/
+build/
+*.exe
+*.pkg
+*.spec
 .venv/
 __pycache__/
 *.pyc
